@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Upload — SCFE Measurement{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Hemipelvis Radiograph Analysis</h1>
+  <p class="lead">Upload a PNG radiograph to compute Southwick angle, alpha angle, and head-neck offset ratio.</p>
+</section>
+
+<section class="upload-card" aria-labelledby="upload-heading">
+  <h2 id="upload-heading" class="visually-hidden">Upload image</h2>
+
+  <form id="upload-form" action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data" novalidate>
+    <label for="image" class="dropzone" id="dropzone" tabindex="0">
+      <span class="dropzone-icon" aria-hidden="true">↑</span>
+      <span class="dropzone-text">Drag and drop a PNG here, or click to browse</span>
+      <span class="dropzone-hint">Hemipelvis radiograph · PNG only · max {{ max_upload_mb }} MB</span>
+      <input type="file" id="image" name="image" accept=".png,image/png" required>
+    </label>
+
+    <div id="preview-area" class="preview-area hidden" aria-live="polite">
+      <img id="preview-image" alt="Selected radiograph preview">
+      <p id="preview-filename" class="preview-filename"></p>
+    </div>
+
+    <button type="submit" id="analyze-btn" class="btn btn-primary" disabled>Analyze Image</button>
+  </form>
+
+  <div id="processing-overlay" class="processing-overlay hidden" role="alert" aria-busy="true">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Running segmentation and measurements…</p>
+    <p class="processing-note">This may take up to a few minutes on CPU.</p>
+  </div>
+</section>
+
+<section class="disclaimer">
+  <h2>Research use</h2>
+  <p>This tool applies trained models to estimate standard SCFE radiographic measurements. Results should be verified by a qualified clinician and are not intended for standalone diagnosis.</p>
+</section>
+{% endblock %}

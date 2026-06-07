@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Results — SCFE Measurement{% endblock %}
+
+{% block content %}
+<section class="results-header">
+  <h1>Analysis Results</h1>
+  <p class="lead">Measurements computed on the uploaded radiograph ({{ result.image_shape.width }}×{{ result.image_shape.height }} px).</p>
+  <a href="{{ url_for('index') }}" class="btn btn-secondary">Analyze Another Image</a>
+</section>
+
+{% if result.warnings %}
+<section class="warnings" role="status">
+  <h2>Warnings</h2>
+  <ul>
+    {% for w in result.warnings %}
+    <li>{{ w }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="metrics-grid" aria-label="Measurement summary">
+  <article class="metric-card">
+    <h2>Southwick Angle</h2>
+    <p class="metric-value">{{ "%.1f"|format(result.southwick_angle) }}°</p>
+  </article>
+  <article class="metric-card">
+    <h2>Alpha Angle</h2>
+    <p class="metric-value">{{ "%.1f"|format(result.alpha_angle) }}°</p>
+  </article>
+  <article class="metric-card">
+    <h2>Head-Neck Offset Ratio</h2>
+    <p class="metric-value">{{ "%.3f"|format(result.head_neck_offset_ratio) }}</p>
+  </article>
+</section>
+
+<section class="preview-row">
+  <h2>Source Image</h2>
+  <img
+    class="source-preview"
+    src="{{ url_for('serve_upload_preview', request_id=request_id, filename=result.upload_filename) }}"
+    alt="Uploaded radiograph"
+  >
+</section>
+
+<section class="annotation-tabs" aria-label="Annotated images">
+  <div class="tab-list" role="tablist">
+    <button type="button" class="tab active" role="tab" aria-selected="true" aria-controls="panel-southwick" data-tab="southwick">Southwick</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" aria-controls="panel-alpha" data-tab="alpha">Alpha Angle</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" aria-controls="panel-hnor" data-tab="hnor">Head-Neck Offset</button>
+  </div>
+
+  <div class="tab-panel active" id="panel-southwick" role="tabpanel">
+    <h3>Southwick Angle Annotation</h3>
+    <div class="annotation-image-wrap">
+      <img class="annotation-image" src="{{ url_for('serve_result_image', request_id=request_id, filename='southwick.png') }}" alt="Southwick angle annotation">
+    </div>
+    <a class="btn btn-link" href="{{ url_for('serve_result_image', request_id=request_id, filename='southwick.png') }}" download="southwick.png">Download PNG</a>
+  </div>
+
+  <div class="tab-panel" id="panel-alpha" role="tabpanel" hidden>
+    <h3>Alpha Angle Annotation</h3>
+    <div class="annotation-image-wrap">
+      <img class="annotation-image" src="{{ url_for('serve_result_image', request_id=request_id, filename='alpha.png') }}" alt="Alpha angle annotation">
+    </div>
+    <a class="btn btn-link" href="{{ url_for('serve_result_image', request_id=request_id, filename='alpha.png') }}" download="alpha.png">Download PNG</a>
+  </div>
+
+  <div class="tab-panel" id="panel-hnor" role="tabpanel" hidden>
+    <h3>Head-Neck Offset Ratio Annotation</h3>
+    <div class="annotation-image-wrap">
+      <img class="annotation-image" src="{{ url_for('serve_result_image', request_id=request_id, filename='hnor.png') }}" alt="Head-neck offset ratio annotation">
+    </div>
+    <a class="btn btn-link" href="{{ url_for('serve_result_image', request_id=request_id, filename='hnor.png') }}" download="hnor.png">Download PNG</a>
+  </div>
+</section>
+{% endblock %}
